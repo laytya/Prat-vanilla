@@ -1,12 +1,10 @@
 --[[
 Name: Prat
-Revision: $Revision: 15947 $
 Author(s): Curney (asml8ed@gmail.com)
            Krtek (krtek4@gmail.com)
+		   laytya (laytya at github)
 Inspired By: idChat2 by Industrial
-Website: http://www.wowace.com/files/index.php?path=Prat/
-Documentation: http://www.wowace.com/wiki/Prat
-SVN: http://svn.wowace.com/wowace/trunk/Prat/
+Website: https://github.com/laytya/Prat
 Description: A framework for chat frame modules.
 Dependencies: Ace2
 ]]
@@ -45,6 +43,8 @@ Prat.Options = {
     args = {}
 }
 
+local version = GetAddOnMetadata("Prat", "Version");
+
 Prat:RegisterChatCommand({"/pratcl"}, Prat.Options)
 Prat:RegisterChatCommand({"/prat"}, function() waterfall:Open('Prat') end)
-waterfall:Register('Prat', 'aceOptions', Prat.Options, 'title','Prat 1.0. Revision: 16703','colorR', 0.6, 'colorG', 0.7, 'colorB', 1) 
+waterfall:Register('Prat', 'aceOptions', Prat.Options, 'title','Prat ' .. version,'colorR', 0.6, 'colorG', 0.7, 'colorB', 1) 
