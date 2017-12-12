@@ -27,6 +27,12 @@ Chat customization addon for World of Warcraft 1.12.1 (Vanilla/Classic WoW).
 * **UrlCopy** - makes URL copying easy (default=on).
 * **Who** - additional channel actions.
 
+
+[Pics](https://i.imgur.com/B55MCCh.jpg)
+
+[Pics](https://i.imgur.com/x7ya2XB.jpg)
+
+
 ## Changes
 
 v1.0.1
@@ -34,6 +40,7 @@ v1.0.1
 - added ruRU Locale by RuWOW Team
 - added support for Census+ database (color nicks in chat)
 - added Gui options (LibWaterfall) or u can use Niagara
+- updated Libs
 - some fixes
 
 ## Download
