@@ -37,7 +37,7 @@ v1.0.1
 - some fixes
 
 ## Download
-#<a href="https://github.com/laytya/MinimapButtonBag-vanilla/releases/latest">Download HERE</a>
+#<a href="https://github.com/laytya/Prat-vanilla/releases">Download HERE</a>
 
 
 ## Slash Commands
