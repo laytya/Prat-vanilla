@@ -27,3 +27,25 @@ Chat customization addon for World of Warcraft 1.12.1 (Vanilla/Classic WoW).
 * **UrlCopy** - makes URL copying easy (default=on).
 * **Who** - additional channel actions.
 
+## Changes
+
+v1.0.1
+
+- added ruRU Locale by RuWOW Team
+- added support for Census+ database (color nicks in chat)
+- added Gui options (LibWaterfall) or u can use Niagara
+- some fixes
+
+## Download
+#<a href="https://github.com/laytya/MinimapButtonBag-vanilla/releases/latest">Download HERE</a>
+
+
+## Slash Commands
+
+/prat - show GUI options
+
+/pratcl - use console commands
+
+## Basic install instructions
+  - Extract the archive
+  - Copy "Prat" folder into your "<WOW FOLDER>/Interface/Addons/" directory
