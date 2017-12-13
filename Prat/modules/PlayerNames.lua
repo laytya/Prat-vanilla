@@ -45,6 +45,8 @@ L:RegisterTranslations("enUS", function() return {
     ["Toggle color marking of your nikname in chat."] = true,
 	["Set mark color"] = true,
     ["Change the mark color of your nikname"] = true,
+	["Group acronim"] = true,
+    ["Simbol of raid group added to group number"] = true ,
 } end)
 
 L:RegisterTranslations("ruRU", function() return {
@@ -137,9 +139,20 @@ Prat_PlayerNames.Classes = {}
 Prat_PlayerNames.Levels = {}
 Prat_PlayerNames.Subgroups = {}
 
+local chatList = {[1] = {t = "SAY", n = "Say"}, 
+				  [4] = {t = "GUILD", n = "Guild"},
+				  [2] = {t = "PARTY", n = "Party"},
+				  [3] = {t = "RAID", n = "Raid"},
+				  [7] = {t = "WHISPER", n = "Whisper"},
+				  [6] = {t = "YELL", n = "Yell"},
+				  [5] = {t = "OFFICER", n = "Officer"},
+				  [93] = {t = "BATTLEGROUND", n = "Battlegground"}
+				  }
+Prat_chatList = chatList
 function Prat_PlayerNames:OnInitialize()
     Prat_PlayerNames.db = Prat:AcquireDBNamespace("PlayerNames")
-    Prat:RegisterDefaults("PlayerNames", "profile", {
+    
+	local defaults = {
         on = true,
         brackets = "Angled",
         tabcomplete = true,
@@ -147,6 +160,8 @@ function Prat_PlayerNames:OnInitialize()
         classes = {},
         levels = {},
         subgroup = true,
+		groupchan = {},
+		groupAcronim = "[%s]",
         keep = true,
 		census = false,
         colormode = "CLASS",
@@ -162,7 +177,11 @@ function Prat_PlayerNames:OnInitialize()
             g = 0,
             b = 1,
         },
-    })
+    }
+	
+	for id,chat in pairs( chatList) do defaults.groupchan[chat.t] = true end
+	
+	Prat:RegisterDefaults("PlayerNames", "profile", defaults)	
     Prat.Options.args.playernames = {
         name = L["PlayerNames"],
         desc = L["Player name formating options."],
@@ -197,10 +216,20 @@ function Prat_PlayerNames:OnInitialize()
             subgroup = {
                 name = L["Show Group"],
                 desc = L["Toggle raid group showing."],
-                type = "toggle",
+                type = "group",
                 order = 170,
-                get = function() return Prat_PlayerNames.db.profile.subgroup end,
-                set = function(v) Prat_PlayerNames.db.profile.subgroup = v end
+				args = {
+					set = {
+                         name = L["Group acronim"],
+                         desc = L["Simbol of raid group added to group number"],
+                         type = "text",
+                         usage = "<string>",
+						 order = 90,
+                         get = function() return Prat_PlayerNames.db.profile.groupAcronim end,
+                         set = function(v) Prat_PlayerNames.db.profile.groupAcronim = v end
+					},
+				},
+                
             },
             keep = {
                 name = L["Keep Info"],
@@ -270,6 +299,33 @@ function Prat_PlayerNames:OnInitialize()
             }
         }
     }
+	local ord = 100
+	local menu = Prat.Options.args.playernames.args.subgroup.args
+	for id,chat in pairs( chatList) do
+		menu[chat.t] = {}
+		menu[chat.t].name = chat.n
+		menu[chat.t].type = "toggle"
+		menu[chat.t].order = ord
+		--menu[chat].get = function() return Prat_PlayerNames.db.profile.groupchan[chat] end
+		--menu[chat].set = function(v) Prat_PlayerNames.db.profile.groupchan[chat] = not  Prat_PlayerNames.db.profile.groupchan[chat] end
+		ord = ord +10
+	end
+	menu["SAY"].get  = function() return Prat_PlayerNames.db.profile.groupchan["SAY"] end
+	menu["SAY"].set = function(v) Prat_PlayerNames.db.profile.groupchan["SAY"] = v end
+	menu["GUILD"].get  = function() return Prat_PlayerNames.db.profile.groupchan["GUILD"] end
+	menu["GUILD"].set = function(v) Prat_PlayerNames.db.profile.groupchan["GUILD"] = v end
+	menu["PARTY"].get  = function() return Prat_PlayerNames.db.profile.groupchan["PARTY"] end
+	menu["PARTY"].set = function(v) Prat_PlayerNames.db.profile.groupchan["PARTY"] = v end
+	menu["RAID"].get  = function() return Prat_PlayerNames.db.profile.groupchan["RAID"] end
+	menu["RAID"].set = function(v) Prat_PlayerNames.db.profile.groupchan["RAID"] = v end
+	menu["WHISPER"].get  = function() return Prat_PlayerNames.db.profile.groupchan["WHISPER"] end
+	menu["WHISPER"].set = function(v) Prat_PlayerNames.db.profile.groupchan["WHISPER"] = v end
+	menu["YELL"].get  = function() return Prat_PlayerNames.db.profile.groupchan["YELL"] end
+	menu["YELL"].set = function(v) Prat_PlayerNames.db.profile.groupchan["YELL"] = v end
+	menu["OFFICER"].get  = function() return Prat_PlayerNames.db.profile.groupchan["OFFICER"] end
+	menu["OFFICER"].set = function(v) Prat_PlayerNames.db.profile.groupchan["OFFICER"] = v end
+	menu["BATTLEGROUND"].get  = function() return Prat_PlayerNames.db.profile.groupchan["BATTLEGROUND"] end
+	menu["BATTLEGROUND"].set = function(v) Prat_PlayerNames.db.profile.groupchan["BATTLEGROUND"] = v end
 end
 
 function Prat_PlayerNames:OnEnable()
@@ -392,7 +448,7 @@ function Prat_PlayerNames:randomColor(Name)
 	return string.format("%02x%02x%02x", r, g, b)
 end
 
-function Prat_PlayerNames:addInfo(Name)
+function Prat_PlayerNames:addInfo(Name, id)
 	if Name then
         local returnName = Name
 
@@ -402,8 +458,10 @@ function Prat_PlayerNames:addInfo(Name)
 			local realmName = g_CensusPlusLocale .. GetCVar("realmName");
 			CensusPlus_ForAllCharacters( realmName, UnitFactionGroup("player"), nil, nil, nil, nil, Prat_InternalWhoResult)		
         end
-        if Prat_PlayerNames.Subgroups[Name] and Prat_PlayerNames.db.profile.subgroup then
-			returnName = string.format("%s:%s", returnName, Prat_PlayerNames.Subgroups[Name])
+        
+		if Prat_PlayerNames.Subgroups[Name] and (id == nil or (chatList[id] and Prat_PlayerNames.db.profile.groupchan[chatList[id].t])) then
+			local grp = string.format(Prat_PlayerNames.db.profile.groupAcronim,Prat_PlayerNames.Subgroups[Name] or "")
+			returnName = string.format("%s%s", returnName, grp )
         end
 		if Prat_PlayerNames.Classes[Name] then
 		        if Prat_PlayerNames.db.profile.colormode == "CLASS" then
@@ -461,7 +519,7 @@ function Prat_PlayerNames:AddMessage(frame, text, r, g, b, id)
 			
         local Brackets
 
-		Name = self:addInfo(Name)
+		Name = self:addInfo(Name, id)
 
         if Prat_PlayerNames.db.profile.brackets == "Angled" then
             Brackets = "<|Hplayer:%1|h" .. Name .. "|h>"
@@ -489,7 +547,7 @@ function Prat_PlayerNames:TabComplete(enabled)
 					local text = ""
                     for _, cand in ipairs(cands) do
 						cand = string.gsub(cand, ":", "")
-						cand = self:addInfo(cand)
+						cand = self:addInfo(cand, nil)
 						text = text .. " " .. cand
                     end
                     Prat:Print("Tab completion : " .. text)
