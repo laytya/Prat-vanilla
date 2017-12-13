@@ -233,6 +233,7 @@ end
 
 function Prat_PopupMessage:AddMessage(frame, text, r, g, b, id)
       
+	if not text then return end  
     local Name = string.gsub(text, ".*|Hplayer:(.-)|h.*", "%1")
     
     if Name ~= self.playerName then 

@@ -41,6 +41,10 @@ L:RegisterTranslations("enUS", function() return {
     ["Toggle the module on and off."] = true,
 	["Use Census+"] = true,
     ["Use Census+ database"] = true,
+	["Mark self"] = true,
+    ["Toggle color marking of your nikname in chat."] = true,
+	["Set mark color"] = true,
+    ["Change the mark color of your nikname"] = true,
 } end)
 
 L:RegisterTranslations("ruRU", function() return {
@@ -152,6 +156,12 @@ function Prat_PlayerNames:OnInitialize()
             g = 0,
             b = 1,
         },
+		markself = true,
+		selfcolor = {
+            r = 1,
+            g = 0,
+            b = 1,
+        },
     })
     Prat.Options.args.playernames = {
         name = L["PlayerNames"],
@@ -204,7 +214,7 @@ function Prat_PlayerNames:OnInitialize()
                 name = L["Use Census+"],
                 desc = L["Use Census+ database"],
                 type = "toggle",
-                order = 180,
+                order = 185,
                 get = function() return Prat_PlayerNames.db.profile.census end,
                 set = function(v) Prat_PlayerNames.db.profile.census = v end
             },
@@ -233,11 +243,28 @@ function Prat_PlayerNames:OnInitialize()
                 set = function(r, g, b, a) Prat_PlayerNames.db.profile.color.r, Prat_PlayerNames.db.profile.color.g, Prat_PlayerNames.db.profile.color.b = r, g, b end,
                 disabled = function() if not Prat_PlayerNames.db.profile.usecommoncolor then return true else return false end end,
             },
+			markself = {
+                name = L["Mark self"],
+                desc = L["Toggle color marking of your nikname in chat."],
+                type = "toggle",
+                order = 220,
+                get = function() return Prat_PlayerNames.db.profile.markself end,
+                set = function(v) Prat_PlayerNames.db.profile.markself = v end
+            },
+            setselfcolor = {
+                name = L["Set mark color"],
+                desc = L["Change the mark color of your nikname"],
+                type = "color",
+                order = 230,
+                get = function() return Prat_PlayerNames.db.profile.selfcolor.r, Prat_PlayerNames.db.profile.selfcolor.g, Prat_PlayerNames.db.profile.selfcolor.b end,
+                set = function(r, g, b, a) Prat_PlayerNames.db.profile.selfcolor.r, Prat_PlayerNames.db.profile.selfcolor.g, Prat_PlayerNames.db.profile.selfcolor.b = r, g, b end,
+                disabled = function() if not Prat_PlayerNames.db.profile.markself then return true else return false end end,
+            },
             toggle = {
                 name = L["Toggle"],
                 desc = L["Toggle the module on and off."],
                 type = "toggle",
-                order = 220,
+                order = 500,
                 get = function() return Prat_PlayerNames.db.profile.on end,
                 set = function() Prat_PlayerNames.db.profile.on = Prat:ToggleModuleActive("playernames") end
             }
@@ -263,7 +290,9 @@ function Prat_PlayerNames:OnEnable()
 
  	local PlayerClass
     _, PlayerClass = UnitClass("player")
-    self:addName(UnitName("player"), Playerclass, UnitLevel("player"))
+	self.playerName = UnitName("player");
+    self:addName(self.playerName, Playerclass, UnitLevel("player"))
+	
 
 	self:updateParty()
 	self:updateRaid()
@@ -407,10 +436,29 @@ function Prat_InternalWhoResult(Name, Level, guild, race, Class, lastSeen )
     end
   end
 end
-
+function gisub(s, pat, repl, n)
+    pat = string.gsub(pat, '(%a)', 
+               function (v) return '['..strupper(v)..strlower(v)..']' end)
+    if n then
+        return string.gsub(s, pat, repl, n)
+    else
+        return string.gsub(s, pat, repl)
+    end
+end
 function Prat_PlayerNames:AddMessage(frame, text, r, g, b, id)
     if text then
         local Name = string.gsub(text, ".*|Hplayer:(.-)|h.*", "%1")
+		if Name ~= self.playerName and Prat_PlayerNames.db.profile.markself then 
+			local textL = string.lower(text)    
+			local playerL = string.lower(self.playerName)
+			if string.find(textL, playerL) then
+				local color = string.format("%02x%02x%02x", Prat_PlayerNames.db.profile.selfcolor.r*255, Prat_PlayerNames.db.profile.selfcolor.g*255, Prat_PlayerNames.db.profile.selfcolor.b*255)
+				local returnName = string.format("|cff%s%s|r", color, self.playerName)
+				text = gisub(text, self.playerName, returnName )
+				PlaySound("FriendJoinGame");
+			end
+		end
+			
         local Brackets
 
 		Name = self:addInfo(Name)

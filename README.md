@@ -35,6 +35,11 @@ Chat customization addon for World of Warcraft 1.12.1 (Vanilla/Classic WoW).
 
 ## Changes
 
+v1.0.2
+
+- added self nikname highlighting in chat (PopupMessage can be disabled)
+- some fixes
+
 v1.0.1
 
 - added ruRU Locale by RuWOW Team
