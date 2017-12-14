@@ -82,7 +82,7 @@ function Prat_ChannelColorMemory:OnEnable()
 	self:RegisterEvent("UPDATE_CHAT_COLOR")
 	self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
 end
-function Prat_ChannelSeparator:OnDisable()
+function Prat_ChannelColorMemory:OnDisable()
 	self:UnregisterEvent("UPDATE_CHAT_COLOR")
 	self:UnregisterEvent("CHAT_MSG_CHANNEL_NOTICE")
 end

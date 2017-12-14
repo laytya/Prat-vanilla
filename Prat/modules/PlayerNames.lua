@@ -47,6 +47,7 @@ L:RegisterTranslations("enUS", function() return {
     ["Change the mark color of your nikname"] = true,
 	["Group acronim"] = true,
     ["Simbol of raid group added to group number"] = true ,
+	["Enable group number at %s"] = true,
 } end)
 
 L:RegisterTranslations("ruRU", function() return {
@@ -304,6 +305,7 @@ function Prat_PlayerNames:OnInitialize()
 	for id,chat in pairs( chatList) do
 		menu[chat.t] = {}
 		menu[chat.t].name = chat.n
+		menu[chat.t].desc = string.format(L["Enable group number at %s"],chat.n)
 		menu[chat.t].type = "toggle"
 		menu[chat.t].order = ord
 		--menu[chat].get = function() return Prat_PlayerNames.db.profile.groupchan[chat] end
