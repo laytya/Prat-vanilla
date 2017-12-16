@@ -35,6 +35,10 @@ Chat customization addon for World of Warcraft 1.12.1 (Vanilla/Classic WoW).
 
 ## Changes
 
+v1.0.3
+
+- try to fix performance issue at PlayerNames module
+
 v1.0.2
 
 - added self nikname highlighting in chat (PopupMessage can be disabled)

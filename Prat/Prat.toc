@@ -5,7 +5,7 @@
 ## Notes-ruRU: Фреймворк для чата.
 ## Notes: A framework for chat frame modules.
 ## Notes-frFR: Framework pour des modules concernant les fentres de discussion
-## Version: v1.0.2
+## Version: v1.0.3
 ## Author: Prat Development Team, laytya
 
 ## X-Category: Chat/Communication

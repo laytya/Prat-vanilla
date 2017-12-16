@@ -133,6 +133,7 @@ L:RegisterTranslations("koKR", function() return {
 } end)
 
 local BC = AceLibrary("Babble-Class-2.2")
+local sfind, sformat, slower, sgsub = string.find, string.format , string.lower, string.gsub
 
 Prat_PlayerNames = Prat:NewModule("playernames")
 
@@ -305,7 +306,7 @@ function Prat_PlayerNames:OnInitialize()
 	for id,chat in pairs( chatList) do
 		menu[chat.t] = {}
 		menu[chat.t].name = chat.n
-		menu[chat.t].desc = string.format(L["Enable group number at %s"],chat.n)
+		menu[chat.t].desc = sformat(L["Enable group number at %s"],chat.n)
 		menu[chat.t].type = "toggle"
 		menu[chat.t].order = ord
 		--menu[chat].get = function() return Prat_PlayerNames.db.profile.groupchan[chat] end
@@ -447,7 +448,7 @@ function Prat_PlayerNames:randomColor(Name)
         b = math.abs(b - 255);
     end
 
-	return string.format("%02x%02x%02x", r, g, b)
+	return sformat("%02x%02x%02x", r, g, b)
 end
 
 function Prat_PlayerNames:addInfo(Name, id)
@@ -455,26 +456,26 @@ function Prat_PlayerNames:addInfo(Name, id)
         local returnName = Name
 
         if Prat_PlayerNames.Levels[Name] and Prat_PlayerNames.db.profile.level then
-			returnName = string.format("%s:%s", Prat_PlayerNames.Levels[Name], returnName)
+			returnName = sformat("%s:%s", Prat_PlayerNames.Levels[Name], returnName)
 		elseif Prat_PlayerNames.db.profile.census and CensusPlus_ForAllCharacters then
 			local realmName = g_CensusPlusLocale .. GetCVar("realmName");
 			CensusPlus_ForAllCharacters( realmName, UnitFactionGroup("player"), nil, nil, nil, nil, Prat_InternalWhoResult)		
         end
         
 		if Prat_PlayerNames.Subgroups[Name] and (id == nil or (chatList[id] and Prat_PlayerNames.db.profile.groupchan[chatList[id].t])) then
-			local grp = string.format(Prat_PlayerNames.db.profile.groupAcronim,Prat_PlayerNames.Subgroups[Name] or "")
-			returnName = string.format("%s%s", returnName, grp )
+			local grp = sformat(Prat_PlayerNames.db.profile.groupAcronim,Prat_PlayerNames.Subgroups[Name] or "")
+			returnName = sformat("%s%s", returnName, grp )
         end
 		if Prat_PlayerNames.Classes[Name] then
 		        if Prat_PlayerNames.db.profile.colormode == "CLASS" then
-				returnName =  string.format("|cff%s%s|r", BC:GetHexColor(Prat_PlayerNames.Classes[Name]), returnName)
+				returnName =  sformat("|cff%s%s|r", BC:GetHexColor(Prat_PlayerNames.Classes[Name]), returnName)
 			elseif Prat_PlayerNames.db.profile.colormode == "RANDOM" then
-				returnName =  string.format("|cff%s%s|r", self:randomColor(Name), returnName)			
+				returnName =  sformat("|cff%s%s|r", self:randomColor(Name), returnName)			
 		        end
 		else
 			if Prat_PlayerNames.db.profile.usecommoncolor then
-				local color = string.format("%02x%02x%02x", Prat_PlayerNames.db.profile.color.r*255, Prat_PlayerNames.db.profile.color.g*255, Prat_PlayerNames.db.profile.color.b*255)
-				returnName = string.format("|cff%s%s|r", color, returnName)		
+				local color = sformat("%02x%02x%02x", Prat_PlayerNames.db.profile.color.r*255, Prat_PlayerNames.db.profile.color.g*255, Prat_PlayerNames.db.profile.color.b*255)
+				returnName = sformat("|cff%s%s|r", color, returnName)		
 			end
 		end
 		
@@ -497,23 +498,23 @@ function Prat_InternalWhoResult(Name, Level, guild, race, Class, lastSeen )
   end
 end
 function gisub(s, pat, repl, n)
-    pat = string.gsub(pat, '(%a)', 
+    pat = sgsub(pat, '(%a)', 
                function (v) return '['..strupper(v)..strlower(v)..']' end)
     if n then
-        return string.gsub(s, pat, repl, n)
+        return sgsub(s, pat, repl, n)
     else
-        return string.gsub(s, pat, repl)
+        return sgsub(s, pat, repl)
     end
 end
 function Prat_PlayerNames:AddMessage(frame, text, r, g, b, id)
-    if text then
-        local Name = string.gsub(text, ".*|Hplayer:(.-)|h.*", "%1")
+    if text and id then
+        local Name = sgsub(text, ".*|Hplayer:(.-)|h.*", "%1")
 		if Name ~= self.playerName and Prat_PlayerNames.db.profile.markself then 
-			local textL = string.lower(text)    
-			local playerL = string.lower(self.playerName)
-			if string.find(textL, playerL) then
-				local color = string.format("%02x%02x%02x", Prat_PlayerNames.db.profile.selfcolor.r*255, Prat_PlayerNames.db.profile.selfcolor.g*255, Prat_PlayerNames.db.profile.selfcolor.b*255)
-				local returnName = string.format("|cff%s%s|r", color, self.playerName)
+			local textL = slower(text)    
+			local playerL = slower(self.playerName)
+			if sfind(textL, playerL) then
+				local color = sformat("%02x%02x%02x", Prat_PlayerNames.db.profile.selfcolor.r*255, Prat_PlayerNames.db.profile.selfcolor.g*255, Prat_PlayerNames.db.profile.selfcolor.b*255)
+				local returnName = sformat("|cff%s%s|r", color, self.playerName)
 				text = gisub(text, self.playerName, returnName )
 				PlaySound("FriendJoinGame");
 			end
@@ -531,7 +532,7 @@ function Prat_PlayerNames:AddMessage(frame, text, r, g, b, id)
             Brackets = "[|Hplayer:%1|h" .. Name .. "|h]"
         end
         
-        text = string.gsub(text, "|Hplayer:(.-)|h%[.-%]|h(.-:-)", Brackets .. "%2")
+        text = sgsub(text, "|Hplayer:(.-)|h%[.-%]|h(.-:-)", Brackets .. "%2")
     end
     Prat_PlayerNames.hooks[frame].AddMessage(frame, text, r, g, b, id)
 end
@@ -548,7 +549,7 @@ function Prat_PlayerNames:TabComplete(enabled)
                 function(u, cands)
 					local text = ""
                     for _, cand in ipairs(cands) do
-						cand = string.gsub(cand, ":", "")
+						cand = sgsub(cand, ":", "")
 						cand = self:addInfo(cand, nil)
 						text = text .. " " .. cand
                     end
