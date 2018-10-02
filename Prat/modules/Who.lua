@@ -287,6 +287,7 @@ local beautifyTable = {
 
 function Prat_Who:BeautifyName(name)
 -- * channel owner, @ channel moderator, # muted/unvoiced.
+	if name then
 	name = string.gsub(name, ",", "");
 
 	for id, option in beautifyTable do
@@ -295,13 +296,16 @@ function Prat_Who:BeautifyName(name)
 	
 	return name
 end
+end
 
 function Prat_Who:DebeautifyName(name)
+	if name then
 	for id, option in beautifyTable do
 		name = string.gsub(name, option["patternB"] , option["replacementB"]);
 	end
 
 	return name
+end
 end
 
 function Prat_Who:Invite()

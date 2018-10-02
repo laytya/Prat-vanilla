@@ -19,6 +19,8 @@ L:RegisterTranslations("enUS", function() return {
     ["ChatManager"] = true,
     ["Toggle sending items in Cirk\" ChatManager format."] = true,
     ["Toggle sending items in ChatLink format."] = true,
+    ["Plain link"] = true,
+    ["Toggle sending items unchanged."] = true,
     ["Toggle"] = true,
     ["Toggle the module on and off."] = true,
 } end)
@@ -27,8 +29,10 @@ L:RegisterTranslations("ruRU", function() return {
     ["ChatLink"] = "ChatLink",
     ["Chat channel item link options."] = "Опции ссылки предмета в канале чата.",
     ["ChatManager"] = "ChatManager",
-    ["Toggle sending items in Cirk\" ChatManager format."] = "Вкл/Выкл ChatManager формат отправки предмета.",
-    ["Toggle sending items in ChatLink format."] = "Вкл/Выкл отправку предмета в ChatLink формат.",
+    ["Toggle sending items in Cirk\" ChatManager format."] = "Вкл ChatManager формат отправки предмета.",
+    ["Toggle sending items in ChatLink format."] = "Вкл отправку предмета в ChatLink формате.",
+    ["Plain link"] = "Простая ссылка",
+    ["Toggle sending items unchanged."] = "Вкл отправку ссылок вещей неизменными",
     ["Toggle"] = "Вкл/Выкл",
     ["Toggle the module on and off."] = "Вкл/Выкл модуль",
 } end)
@@ -39,6 +43,8 @@ L:RegisterTranslations("zhCN", function() return {
 	["ChatManager"] = "聊天管理",
 	["Toggle sending items in Cirk\" ChatManager format."] = "切换以 Cirk\" 聊天管理模式发送物品。",
 	["Toggle sending items in ChatLink format."] = "切换聊天链接物品发送格式。",
+	["Plain link"] = true,
+    ["Toggle sending items unchanged."] = true,
 	["Toggle"] = "切换",
 	["Toggle the module on and off."] = "切换此功能的打开与关闭。",
 } end)
@@ -50,6 +56,8 @@ L:RegisterTranslations("koKR", function() return {
 --    ["ChatManager"] = true,
     ["Toggle sending items in Cirk\" ChatManager format."] = "Cirk\" Chatmanager 형식으로 아이템 보내기를 전환합니다.",
     ["Toggle sending items in ChatLink format."] = "ChatLink 형식으로 아이템 보내기를 전환합니다.",
+	["Plain link"] = true,
+    ["Toggle sending items unchanged."] = true,
     ["Toggle"] = "전환",
     ["Toggle the module on and off."] = "모듈 켜고 끄기를 전환합니다.",
 } end)
@@ -62,6 +70,7 @@ function Prat_ChatLink:OnInitialize()
         on = true,
         clink = true,
         chatmanager = false,
+		plain = false,
     })
     Prat.Options.args.chatlink = {
         name = L["ChatLink"],
@@ -73,14 +82,21 @@ function Prat_ChatLink:OnInitialize()
                 desc = L["Toggle sending items in Cirk\" ChatManager format."],
                 type = "toggle",
                 get = function() return self.db.profile.chatmanager end,
-                set = function(v) self.db.profile.clink = not v;  self.db.profile.chatmanager = v end
+                set = function(v) self.db.profile.clink = not v;  self.db.profile.chatmanager = v;  self.db.profile.plain = not v; end
             },
             clink = {
                 name = L["ChatLink"],
                 desc = L["Toggle sending items in ChatLink format."],
                 type = "toggle",
                 get = function() return self.db.profile.clink end,
-                set = function(v) self.db.profile.clink = v;  self.db.profile.chatmanager = not v end
+                set = function(v) self.db.profile.clink = v;  self.db.profile.chatmanager = not v;self.db.profile.plain = not v; end
+            },
+			plain = {
+				name = L["Plain link"],
+                desc = L["Toggle sending items unchanged."],
+                type = "toggle",
+                get = function() return self.db.profile.plain end,
+                set = function(v) self.db.profile.plain = v; self.db.profile.clink = not v;  self.db.profile.chatmanager = not v end
             },
             toggle = {
                 name = L["Toggle"],
