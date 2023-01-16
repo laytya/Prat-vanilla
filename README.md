@@ -34,6 +34,9 @@ Chat customization addon for World of Warcraft 1.12.1 (Vanilla/Classic WoW).
 
 
 ## Changes
+v1.0.4
+
+- Added setting for default ChatTab at logon or reload
 
 v1.0.3
 
