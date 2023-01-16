@@ -68,6 +68,8 @@ L:RegisterTranslations("enUS", function() return {
     ["Toggle flashing the active chat tab on whispers."] = true,
     ["Toggle"] = true,
     ["Toggle the module on and off."] = true,
+    ["Set chattab on login"] = true,
+    ["Set number of chattab to show on login."] = true,
 } end)
 
 L:RegisterTranslations("ruRU", function() return {
@@ -94,6 +96,8 @@ L:RegisterTranslations("ruRU", function() return {
     ["Toggle flashing the active chat tab on whispers."] = "Переключение мерцания закладки при личных сообщениях",
     ["Toggle"] = "Вкл/Выкл",
     ["Toggle the module on and off."] = "Вкл/Выкл модуль.",
+    ["Set chattab on login"] = "Показать чат после входа",
+    ["Set number of chattab to show on login."] = "Установить номер чата который показать после входа",
 } end)
 
 L:RegisterTranslations("koKR", function() return {
@@ -120,6 +124,8 @@ L:RegisterTranslations("koKR", function() return {
     ["Toggle flashing the active chat tab on whispers."] = "귓속말시 활성화된 대화탭 강조를 전환합니다.",
     ["Toggle"] = "전환",
     ["Toggle the module on and off."] = "모듈 켜고 끄기를 전환합니다.",
+    ["Set chattab on login"] = true,
+    ["Set number of chattab to show on login."] = true,
 } end)
 
 -- create prat module
@@ -138,6 +144,7 @@ function Prat_ChatTabs:OnInitialize()
         cf = {"ALWAYS", "ALWAYS", "ALWAYS", "ALWAYS", "ALWAYS", "ALWAYS", "ALWAYS"},
         cfall = "ALWAYS",
         flashselected = false,
+        showonlogin = 1,
 	})
 	Prat.Options.args.tabs = {
         name = L["ChatTabs"],
@@ -300,11 +307,22 @@ function Prat_ChatTabs:OnInitialize()
                 set = function(v) self.db.profile.flashselected = v  Prat_ChatTabs:HookFlash() end,
                 order = 211
 			},
+            showonlogin = {
+                name = L["Show chatbar on login"],
+                desc = L["Set number of chatbar to show on login."],
+                type = "range",
+                get = function() return self.db.profile.showonlogin end,
+                set = function(v) self.db.profile.showonlogin = v end,
+                min = 1,
+                max = 7,
+                step = 1,
+                order = 212,
+            },
             toggle = {
                 name = L["Toggle"],
                 desc = L["Toggle the module on and off."],
                 type = "toggle",
-                order = 200,
+                order = 400,
                 get = function() return self.db.profile.on end,
                 set = function() self.db.profile.on = Prat:ToggleModuleActive("tabs") end
             }
@@ -320,6 +338,9 @@ end
 function Prat_ChatTabs:OnEnable()
     self:SecureHook("FCF_OnUpdate", "OnUpdate")
     self:HookFlash()
+    local frame = getglobal("ChatFrame"..(self.db.profile.showonlogin or 1));
+    SELECTED_CHAT_FRAME = frame
+    FCF_SelectDockFrame(frame)
     self:OnUpdate()
 end
 
