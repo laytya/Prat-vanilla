@@ -308,8 +308,8 @@ function Prat_ChatTabs:OnInitialize()
                 order = 211
 			},
             showonlogin = {
-                name = L["Show chatbar on login"],
-                desc = L["Set number of chatbar to show on login."],
+                name = L["Set chattab on login"],
+                desc = L["Set number of chattab to show on login."],
                 type = "range",
                 get = function() return self.db.profile.showonlogin end,
                 set = function(v) self.db.profile.showonlogin = v end,
