@@ -22,7 +22,7 @@ L:RegisterTranslations("enUS", function() return {
 } end)
 
 L:RegisterTranslations("ruRU", function() return {
-    ["ChannelColorMemory"] = "ChannelColorMemory",
+    ["ChannelColorMemory"] = "Запомнить цвет канала",
     ["Remembers the colors of channels by channel name."] = "Запоминает цвета каналов по названию канала.",
     ["(%w+)%s?(.*)"] = "(%w+)%s?(.*)",
     ["Toggle"] = "Вкл/Выкл",
@@ -43,14 +43,6 @@ L:RegisterTranslations("koKR", function() return {
     ["(%w+)%s?(.*)"] = "(.+)%s?(.*)",
     ["Toggle"] = "전환",
     ["Toggle the module on and off."] = "모듈 켜고 끄기 전환",
-} end)
-
-L:RegisterTranslations("ruRU", function() return {
-    ["ChannelColorMemory"] = "Запомнить цвет канала",
-    ["Remembers the colors of channels by channel name."] = "Запоминать цвет канала по его имени.",
-    ["(%w+)%s?(.*)"] = "(%w+):%s?(.*)",
-    ["Toggle"] = "Переключить",
-    ["Toggle the module on and off."] = "Включить/выключить модуль.",
 } end)
 
 
