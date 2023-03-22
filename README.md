@@ -34,6 +34,11 @@ Chat customization addon for World of Warcraft 1.12.1 (Vanilla/Classic WoW).
 
 
 ## Changes
+v1.0.7
+- Added UNICODE font support (chinese font) - Need reload UI after change font
+![image](https://user-images.githubusercontent.com/20452393/226829333-c587deef-fabe-4778-b844-248768c6cf3e.png)
+![image](https://user-images.githubusercontent.com/20452393/226829652-05133458-c640-451d-91a6-b5baec88392a.png)
+
 v1.0.5
 
 - Added setting for default ChatTab at logon or reload
