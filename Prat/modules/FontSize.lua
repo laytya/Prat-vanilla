@@ -12,6 +12,8 @@ Dependencies: Prat
 
 local L = AceLibrary("AceLocale-2.2"):new("PratFontSize")
 
+UNICODEFONT = "Interface\\AddOns\\Prat\\font\\WarSansTT-Bliz-500.ttf"
+
 L:RegisterTranslations("enUS", function() return {
     ["FontSize"] = true,
     ["Chat window font size options."] = true,
@@ -25,6 +27,8 @@ L:RegisterTranslations("enUS", function() return {
     ["Sets font size for all chat windows."] = true,
     ["Toggle"] = true,
     ["Toggle the module on and off."] = true,
+    ["ChatFont"] = true,
+    ["Choose Default WOW font or UNICODE."] = true,
 } end)
 
 L:RegisterTranslations("ruRU", function() return {
@@ -40,6 +44,8 @@ L:RegisterTranslations("ruRU", function() return {
     ["Sets font size for all chat windows."] = "Устанавливает размер шрифта для всех окон чата.",
     ["Toggle"] = "Вкл/Выкл",
     ["Toggle the module on and off."] = "Вкл/Выкл модуль",
+    ["ChatFont"] = "Шрифт чата",
+    ["Choose Default WOW font or UNICODE."] = "Выберите каой шрифт использовать для чата - поумолчанию или Юникод",
 } end)
 
 L:RegisterTranslations("zhCN", function() return {
@@ -55,6 +61,8 @@ L:RegisterTranslations("zhCN", function() return {
 	["Sets font size for all chat windows."] = "设置所有聊天窗口字体尺寸。",
 	["Toggle"] = "切换",
 	["Toggle the module on and off."] = "切换此模块打开与关闭。",
+    ["ChatFont"] = "Шрифт чата",
+    ["Choose Default WOW font or UNICODE."] = "Выберите каой шрифт использовать для чата - поумолчанию или Юникод",
 } end)
 
 L:RegisterTranslations("koKR", function() return {
@@ -70,6 +78,8 @@ L:RegisterTranslations("koKR", function() return {
     ["Sets font size for all chat windows."] = "모든 대화창에 대한 글자 크기를 설정합니다.",
     ["Toggle"] = "전환",
     ["Toggle the module on and off."] = "모듈 켜고 끄기를 전환합니다.",
+    ["ChatFont"] = "Шрифт чата",
+    ["Choose Default WOW font or UNICODE."] = "Выберите каой шрифт использовать для чата - поумолчанию или Юникод",
 } end)
 
 Prat_FontSize = Prat:NewModule("fontsize")
@@ -80,8 +90,12 @@ function Prat_FontSize:OnInitialize()
         on = true,
         sizemode = "INDIVIDUAL",
         size = {12, 12, 12, 12, 12, 12, 12},
-        sizeall = 12
+        sizeall = 12,
+        chatfont = "Fonts\\ARIALN.ttf",
     })
+    if not self.db.profile.chatfont then self.db.profile.chatfont = "Fonts\\ARIALN.ttf" end
+    NAMEPLATE_FONT = self.db.profile.chatfont
+    ChatFontNormal:SetFont(self.db.profile.chatfont, self.db.profile.sizeall, "")
     Prat.Options.args.fontsize = {
         name = L["FontSize"],
         desc = L["Chat window font size options."],
@@ -95,6 +109,18 @@ function Prat_FontSize:OnInitialize()
                 set = function(v) self.db.profile.sizemode = v end,
                 validate = {["ALL"] = "All", ["INDIVIDUAL"] = "Individual"},
                 order = 197
+            },
+            chatfont = {
+                name = L["ChatFont"],
+                desc = L["Choose Default WOW font or UNICODE."],
+                type = "text",
+                get = function() return self.db.profile.chatfont end,
+                set = function(v) self.db.profile.chatfont = v
+                    NAMEPLATE_FONT = self.db.profile.chatfont
+                    ChatFontNormal:SetFont(self.db.profile.chatfont, self.db.profile.sizeall, "")
+                end,
+                validate = {["Fonts\\ARIALN.ttf"] = "Default", [UNICODEFONT] = "UNICODE"},
+                order = 196
             },
             set = {
                 name = L["Set"],
@@ -218,6 +244,7 @@ function Prat_FontSize:OnDisable()
 end
 
 function Prat_FontSize:SetSize(id, size)
-    local font = getglobal("ChatFrame"..id):GetFont();
-    getglobal("ChatFrame"..id):SetFont(font,size)
+	local fontFile, unused, fontFlags = getglobal("ChatFrame"..id):GetFont();
+	getglobal("ChatFrame"..id):SetFont(fontFile, size, fontFlags);
+	SetChatWindowSize(getglobal("ChatFrame"..id):GetID(), size);
 end
