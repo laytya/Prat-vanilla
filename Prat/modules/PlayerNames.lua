@@ -508,22 +508,30 @@ function gisub(s, pat, repl, n)
 end
 function Prat_PlayerNames:AddMessage(frame, text, r, g, b, id)
     if text and id then
-        local Name = sgsub(text, ".*|Hplayer:(.-)|h.*", "%1")
-		if Name ~= self.playerName and Prat_PlayerNames.db.profile.markself then 
+        -- local Name = sgsub(text, ".*|Hplayer:(.-)|h.*", "%1")
+        
+        -- Sender's name is always the first linked player name in the message
+        local _, _, Name = sfind(text, "|Hplayer:(.-)|h%[.-]|h")
+
+        -- If self.playerName is a clickable link, don't color it
+        local _, _, linkedName = sfind(text, sformat("Hplayer:(%s)", self.playerName))
+        if not linkedName then
+            _, _, linkedName = sfind(text, sformat("|h[(%s)]|h", self.playerName))
+        end
+		if not linkedName and Name ~= self.playerName and Prat_PlayerNames.db.profile.markself then 
 			local textL = slower(text)    
 			local playerL = slower(self.playerName)
 			if sfind(textL, playerL) then
 				local color = sformat("%02x%02x%02x", Prat_PlayerNames.db.profile.selfcolor.r*255, Prat_PlayerNames.db.profile.selfcolor.g*255, Prat_PlayerNames.db.profile.selfcolor.b*255)
 				local returnName = sformat("|cff%s%s|r", color, self.playerName)
-				text = gisub(text, self.playerName, returnName )
+                text = gisub(text, self.playerName, returnName)
 				PlaySound("FriendJoinGame");
 			end
 		end
-			
+
         local Brackets
-
 		Name = self:addInfo(Name, id)
-
+        
         if Prat_PlayerNames.db.profile.brackets == "Angled" then
             Brackets = "<|Hplayer:%1|h" .. Name .. "|h>"
         elseif Prat_PlayerNames.db.profile.brackets == "None" then
@@ -531,8 +539,9 @@ function Prat_PlayerNames:AddMessage(frame, text, r, g, b, id)
         else
             Brackets = "[|Hplayer:%1|h" .. Name .. "|h]"
         end
-        
-        text = sgsub(text, "|Hplayer:(.-)|h%[.-%]|h(.-:-)", Brackets .. "%2")
+
+        -- Only replace the first instance, and leave any linked names untouched
+        text = sgsub(text, "|Hplayer:(.-)|h%[.-%]|h(.-:-)", Brackets .. "%2", 1)
     end
     Prat_PlayerNames.hooks[frame].AddMessage(frame, text, r, g, b, id)
 end
